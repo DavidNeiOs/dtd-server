@@ -1,16 +1,18 @@
 import express, { Application } from 'express'
-import dotenv from "dotenv"
+import session from "express-session"
+import connectMongo from "connect-mongo"
 import cors from 'cors'
-import http from 'http'
-import https from 'https'
-import fs from 'fs'
-import path from 'path'
+import mongoose from "mongoose"
 import cookieParser from "cookie-parser"
 import bodyParser from "body-parser"
-import mongoose from "mongoose"
+import dotenv from "dotenv"
+import https from 'https'
+import http from 'http'
+import fs from 'fs'
+import path from 'path'
 
 import { router } from "./routes"
-import { storeSchema } from "./schemas/Store"
+import storeSchema from "./schemas/Store"
 
 const app: Application  = express();
 
@@ -31,15 +33,25 @@ else {
   server = https.createServer(certOptions, app)
 }
 
+const MongoStore = connectMongo(session)
+
 async function startServer() {
   // configure this to only accept requests from client
   app.use(cors());
   app.use(express.static(__dirname + "/public"));
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded( { extended: false }))
+  app.use(bodyParser.urlencoded({ extended: false }));
   app.use(cookieParser());
 
   app.use(express.json())
+  app.use(session({
+    secret: "dtd-session",
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
+  }))
+
+  // Routes
   app.use('/', router)
 
   const options = {
@@ -54,7 +66,7 @@ async function startServer() {
     console.log(`db error: ${err.message}`)
   })
 
-  // models
+  // MODELS
   mongoose.model('Store', storeSchema)
   
   server.listen(4000, () => console.log('listenning in port 4000 👍'))

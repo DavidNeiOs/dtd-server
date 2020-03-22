@@ -1,11 +1,11 @@
 import express from "express"
 import { upload } from "../services/multer"
+import {homePage} from "../controllers/storeController"
+
 
 const router = express.Router()
 
-router.get('/', (req, res) => {
-  res.send('hello from router')
-})
+router.get('/', homePage)
 
 router.post('/upload-image', upload.single('image'), (req, res) => {
   const file = req.file

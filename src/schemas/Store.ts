@@ -9,7 +9,7 @@ interface StoreDoc extends mongoose.Document {
   tags: string[];
 }
 
-export const storeSchema = new mongoose.Schema({
+const storeSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
@@ -25,8 +25,13 @@ export const storeSchema = new mongoose.Schema({
 
 storeSchema.pre<StoreDoc>('save', function(next) {
   if(!this.isModified('name')) {
-    return next()
+    next();
+    return;
   }
+
+  // TODO: make slugs unique
   this.slug = slug(this.name);
   next()
 })
+
+export default storeSchema;
