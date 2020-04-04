@@ -11,8 +11,8 @@ import http from 'http'
 import fs from 'fs'
 import path from 'path'
 
+import { handleErrors } from "./handlers/errorHandlers"
 import { router } from "./routes"
-import storeSchema from "./schemas/Store"
 
 const app: Application  = express();
 
@@ -35,41 +35,26 @@ else {
 
 const MongoStore = connectMongo(session)
 
-async function startServer() {
-  // configure this to only accept requests from client
-  app.use(cors());
-  app.use(express.static(__dirname + "/public"));
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(cookieParser());
+// configure this to only accept requests from client
+app.use(cors());
+app.use(express.static(__dirname + "/public"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-  app.use(express.json())
-  app.use(session({
-    secret: "dtd-session",
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection })
-  }))
+app.use(express.json())
+app.use(session({
+  secret: "dtd-session",
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
+}))
 
-  // Routes
-  app.use('/', router)
+// ROUTES
+app.use('/', router)
 
-  const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }
-  
-  //@ts-ignore
-  await mongoose.connect(process.env.MONGO_DB_URL, options)
-  mongoose.Promise = global.Promise
-  mongoose.connection.on('error', (err) => {
-    console.log(`db error: ${err.message}`)
-  })
+// Error handler
+app.use(handleErrors)
 
-  // MODELS
-  mongoose.model('Store', storeSchema)
-  
-  server.listen(4000, () => console.log('listenning in port 4000 👍'))
-}
+export default server
 
-startServer()

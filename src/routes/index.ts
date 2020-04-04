@@ -1,22 +1,17 @@
 import express from "express"
+
 import { upload } from "../services/multer"
-import {homePage} from "../controllers/storeController"
+
+import { addMedia } from "../controllers/helpersController"
+import { homePage, createStore } from "../controllers/storeController"
 
 
 const router = express.Router()
 
 router.get('/', homePage)
 
-router.post('/upload-image', upload.single('image'), (req, res) => {
-  const file = req.file
-  if(!file) {
-    res.send({ success: false, error_code: "no_file"})
-    return;
-  }
-  console.log('Uploaded file', file)
-  const url = `/images/${file.filename}`
+router.post('/upload-image', upload.single('image'), addMedia)
 
-  res.send({ success: true, url })
-})
+router.post('/add', createStore)
 
 export { router };

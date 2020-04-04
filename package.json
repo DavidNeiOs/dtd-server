@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts",
+    "start": "node dist/start.js",
+    "dev": "nodemon src/start.ts",
     "build": "tsc -p ."
   },
   "author": "DavidNeiOs",
