@@ -13,5 +13,7 @@ export const addStore: RequestHandler = (req, res) => {
 
 export const createStore: RequestHandler = async (req, res) => {
   const store = new Store(req.body)
-  const response = await store.save();
+  await store.save();
+
+  res.send({ success: true, message: "Store created successfully"})
 }

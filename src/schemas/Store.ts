@@ -2,11 +2,19 @@ import mongoose from "mongoose"
 mongoose.Promise = global.Promise
 import slug from "slug"
 
+interface Tags { 
+  WIFI: boolean
+  OPEN_LATE: boolean
+  FAMILY_FRIENDLY: boolean
+  VEGETARIAN: boolean
+  LICENSED: boolean
+}
+
 interface StoreDoc extends mongoose.Document {
   name: string;
   slug: string;
   description: string;
-  tags: string[];
+  tags: Tags;
 }
 
 const storeSchema = new mongoose.Schema({
@@ -20,7 +28,13 @@ const storeSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  tags: [String]
+  tags: {
+    WIFI: Boolean,
+    OPEN_LATE: Boolean,
+    FAMILY_FRIENDLY: Boolean,
+    VEGETARIAN: Boolean,
+    LICENSED: Boolean,
+  }
 })
 
 storeSchema.pre<StoreDoc>('save', function(next) {
