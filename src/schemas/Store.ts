@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose, { Schema, Document, Model } from "mongoose"
 mongoose.Promise = global.Promise
 import slug from "slug"
 
@@ -10,14 +10,16 @@ interface Tags {
   LICENSED: boolean
 }
 
-interface StoreDoc extends mongoose.Document {
+export interface StoreDoc extends Document {
   name: string;
   slug: string;
   description: string;
   tags: Tags;
 }
 
-const storeSchema = new mongoose.Schema({
+export interface StoreModel extends Model<StoreDoc> {}
+
+const storeSchema: Schema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,

@@ -1,7 +1,8 @@
 import { RequestHandler } from "express";
-import mongoose from "mongoose";
+import { model } from "mongoose";
+import { StoreModel } from "../schemas/Store"
 
-const Store = mongoose.model('Store');
+const Store: StoreModel = model('Store');
 
 export const homePage: RequestHandler = (req, res) => {
   res.send({data: "Hello from Controller"})
@@ -12,8 +13,7 @@ export const addStore: RequestHandler = (req, res) => {
 }
 
 export const createStore: RequestHandler = async (req, res) => {
-  const store = new Store(req.body)
-  await store.save();
+  const store = await (new Store(req.body)).save()
 
-  res.send({ success: true, message: "Store created successfully"})
+  res.send({ success: true, message: `Store ${store.name} created successfully`, slug: store.slug})
 }
