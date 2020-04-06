@@ -38,7 +38,26 @@ const storeSchema: Schema = new mongoose.Schema({
     VEGETARIAN: Boolean,
     LICENSED: Boolean,
   },
-  url: String
+  url: String,
+  created: {
+    type: Date,
+    default: Date.now
+  },
+  location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [
+      { type: Number,
+        required: 'You must supply coordinates!'
+      }
+    ],
+    address: {
+      type: String,
+      required: 'You must supply an address'
+    }
+  }
 })
 
 storeSchema.pre<StoreDoc>('save', function(next) {
