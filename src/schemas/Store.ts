@@ -15,6 +15,7 @@ export interface StoreDoc extends Document {
   slug: string;
   description: string;
   tags: Tags;
+  url: string
 }
 
 export interface StoreModel extends Model<StoreDoc> {}
@@ -36,7 +37,8 @@ const storeSchema: Schema = new mongoose.Schema({
     FAMILY_FRIENDLY: Boolean,
     VEGETARIAN: Boolean,
     LICENSED: Boolean,
-  }
+  },
+  url: String
 })
 
 storeSchema.pre<StoreDoc>('save', function(next) {

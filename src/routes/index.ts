@@ -3,13 +3,13 @@ import express from "express"
 import { upload } from "../services/multer"
 
 import { addMedia } from "../controllers/helpersController"
-import { homePage, createStore } from "../controllers/storeController"
+import { getStores, createStore } from "../controllers/storeController"
 import { catchErrors } from "../handlers/errorHandlers"
 
 
 const router = express.Router()
 
-router.get('/', homePage)
+router.get('/', catchErrors(getStores))
 
 router.post('/upload-image', upload.single('image'), addMedia)
 
