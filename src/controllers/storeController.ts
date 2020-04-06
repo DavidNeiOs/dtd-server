@@ -21,3 +21,22 @@ export const getStores: RequestHandler = async (req, res) => {
   const stores = await Store.find();
   res.send({ success: true, stores })
 }
+
+export const editStore: RequestHandler = async (req, res) => {
+  // find store with the id
+  const store = await Store.findOne({ _id: req.params.id });
+  // TODO: confirm the owner of the store
+  // send back the data for the form to use
+  res.json(store)
+}
+
+export const updateStore: RequestHandler = async (req, res) => {
+  // find and update store
+  const store = await Store.findOneAndUpdate({ _id: req.params.id }, req.body, {
+    new: true, // return new store instead of old one
+    runValidators: true
+  }).exec()
+  // redirect them and tell them it worked
+
+  res.send({ success: true, message: `Succesfully updated ${store?.name}`})
+}

@@ -7,7 +7,8 @@ dotenv.config();
 
 const options: ConnectionOptions = {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 }
 
 // Had to ignore because of env var can be undefined
