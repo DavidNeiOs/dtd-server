@@ -1,7 +1,7 @@
 import mongoose, { ConnectionOptions } from "mongoose"
 import dotenv from "dotenv"
 
-import StoreSchema, { StoreDoc, StoreModel} from "./schemas/Store"
+import StoreSchema, { StoreDoc, StoreModel} from "./src/schemas/Store"
 
 dotenv.config();
 

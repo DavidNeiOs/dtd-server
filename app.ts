@@ -11,8 +11,8 @@ import http from 'http'
 import fs from 'fs'
 import path from 'path'
 
-import { handleErrors } from "./handlers/errorHandlers"
-import { router } from "./routes"
+import { handleErrors } from "./src/handlers/errorHandlers"
+import { router } from "./src/routes"
 
 const app: Application  = express();
 

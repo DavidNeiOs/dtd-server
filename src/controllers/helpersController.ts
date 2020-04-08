@@ -7,7 +7,7 @@ export const addMedia: RequestHandler = (req, res) => {
     return;
   }
   
-  const url = `/images/${file.filename}`
+  const url = `/images/${req.body.image}`
 
   res.send({ success: true, url })
 }

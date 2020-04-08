@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { model } from "mongoose";
 import { StoreModel } from "../schemas/Store"
 
+
 const Store: StoreModel = model('Store');
 
 
