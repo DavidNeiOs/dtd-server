@@ -41,3 +41,8 @@ export const updateStore: RequestHandler = async (req, res) => {
 
   res.send({ success: true, message: `Succesfully updated ${store?.name}`})
 }
+
+export const getStoreBySlug: RequestHandler = async (req, res) => {
+  const store = await Store.findOne({ slug: req.params.slug });
+  res.json(store);
+}
