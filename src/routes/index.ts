@@ -4,7 +4,7 @@ import { upload } from "../services/multer"
 import { resize } from "../services/jimp"
 
 import { addMedia } from "../controllers/helpersController"
-import { getStores, createStore, editStore, updateStore, getStoreBySlug } from "../controllers/storeController"
+import { getStores, createStore, editStore, updateStore, getStoreBySlug, getStoresByTag } from "../controllers/storeController"
 import { catchErrors } from "../handlers/errorHandlers"
 
 
@@ -21,5 +21,9 @@ router.get('/stores/:id/edit', catchErrors(editStore))
 router.post('/stores/:id/edit', catchErrors(updateStore))
 
 router.get('/store/:slug', catchErrors(getStoreBySlug))
+
+router.get('/tags', catchErrors(getStoresByTag))
+
+router.get('/tags/:tag', catchErrors(getStoresByTag))
 
 export { router };

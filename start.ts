@@ -1,8 +1,6 @@
 import mongoose, { ConnectionOptions } from "mongoose"
 import dotenv from "dotenv"
 
-import StoreSchema, { StoreDoc, StoreModel} from "./src/schemas/Store"
-
 dotenv.config();
 
 const options: ConnectionOptions = {
@@ -21,7 +19,7 @@ mongoose.connection.on('error', (err) => {
 
 
 // MODELS
-mongoose.model<StoreDoc, StoreModel>('Store', StoreSchema)
+import StoreModel from "./src/schemas/Store"
 
 // we need to configure mongoose models before importing the server
 // so we can use them in the routes

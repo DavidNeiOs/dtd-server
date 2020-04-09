@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose"
+import mongoose, { Schema, Document, Model, model } from "mongoose"
 mongoose.Promise = global.Promise
 import slug from "slug"
 
@@ -14,13 +14,11 @@ export interface StoreDoc extends Document {
   name: string;
   slug: string;
   description: string;
-  tags: Tags;
+  tags: string[];
   url: string
 }
 
-export interface StoreModel extends Model<StoreDoc> {}
-
-const storeSchema: Schema = new mongoose.Schema({
+const StoreSchema: Schema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
@@ -31,13 +29,7 @@ const storeSchema: Schema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  tags: {
-    WIFI: Boolean,
-    OPEN_LATE: Boolean,
-    FAMILY_FRIENDLY: Boolean,
-    VEGETARIAN: Boolean,
-    LICENSED: Boolean,
-  },
+  tags: [],
   url: String,
   created: {
     type: Date,
@@ -61,15 +53,34 @@ const storeSchema: Schema = new mongoose.Schema({
   }
 })
 
-storeSchema.pre<StoreDoc>('save', function(next) {
+StoreSchema.pre<StoreDoc>('save', async function(next) {
   if(!this.isModified('name')) {
     next();
     return;
   }
-
-  // TODO: make slugs unique
   this.slug = slug(this.name);
+
+  // find other store stores that have a slug store, store-1, store-2
+  const slugRegEx = new RegExp(`^(${this.slug})((-[0-9]*$)?)$`, 'i');
+  // this is the right way of accessing the model here but ts throws an error
+  //@ts-ignore
+  const storesWithSlug = await this.constructor.find({ slug: slugRegEx })
+
+  if(storesWithSlug.length) {
+    this.slug = `${this.slug}-${storesWithSlug.length + 1}`
+  }
+
   next()
 })
 
-export default storeSchema;
+StoreSchema.statics.getTagsList = function() {
+  return this.aggregate([
+    { $unwind: '$tags' }
+  ]);
+}
+
+export interface StoreModel extends Model<StoreDoc> {
+  getTagsList(): Promise<any>
+}
+
+export default model<StoreDoc, StoreModel>('Store', StoreSchema);

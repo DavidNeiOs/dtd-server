@@ -1,10 +1,5 @@
 import { RequestHandler } from "express";
-import { model } from "mongoose";
-import { StoreModel } from "../schemas/Store"
-
-
-const Store: StoreModel = model('Store');
-
+import Store  from "../schemas/Store"
 
 export const addStore: RequestHandler = (req, res) => {
 
@@ -45,4 +40,11 @@ export const updateStore: RequestHandler = async (req, res) => {
 export const getStoreBySlug: RequestHandler = async (req, res) => {
   const store = await Store.findOne({ slug: req.params.slug });
   res.json(store);
+}
+
+
+export const getStoresByTag: RequestHandler = async (req, res) => {
+  const stores = await Store.getTagsList()
+
+  res.json(stores)
 }
