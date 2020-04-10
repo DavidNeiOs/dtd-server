@@ -2,14 +2,6 @@ import mongoose, { Schema, Document, Model, model } from "mongoose"
 mongoose.Promise = global.Promise
 import slug from "slug"
 
-interface Tags { 
-  WIFI: boolean
-  OPEN_LATE: boolean
-  FAMILY_FRIENDLY: boolean
-  VEGETARIAN: boolean
-  LICENSED: boolean
-}
-
 export interface StoreDoc extends Document {
   name: string;
   slug: string;

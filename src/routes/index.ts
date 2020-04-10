@@ -5,6 +5,7 @@ import { resize } from "../services/jimp"
 
 import { addMedia } from "../controllers/helpersController"
 import { getStores, createStore, editStore, updateStore, getStoreBySlug, getStoresByTag } from "../controllers/storeController"
+import { validateRegister, register } from "../controllers/userController"
 import { catchErrors } from "../handlers/errorHandlers"
 
 
@@ -25,5 +26,9 @@ router.get('/store/:slug', catchErrors(getStoreBySlug))
 router.get('/tags', catchErrors(getStoresByTag))
 
 router.get('/tags/:tag', catchErrors(getStoresByTag))
+
+// register user
+// log them in
+router.post('/register', validateRegister, catchErrors(register) )
 
 export { router };

@@ -19,7 +19,8 @@ mongoose.connection.on('error', (err) => {
 
 
 // MODELS
-import StoreModel from "./src/schemas/Store"
+import StoreModel from "./src/models/Store"
+import UserModel from "./src/models/User"
 
 // we need to configure mongoose models before importing the server
 // so we can use them in the routes

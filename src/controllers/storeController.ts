@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import Store  from "../schemas/Store"
+import Store  from "../models/Store"
 
 export const addStore: RequestHandler = (req, res) => {
 
