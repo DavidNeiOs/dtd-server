@@ -7,6 +7,7 @@ interface UserDoc extends Document {
   name: string;
   email: string;
   password: string;
+  gravatar: string
 }
 
 const userSchema: Schema = new Schema({
@@ -25,9 +26,19 @@ const userSchema: Schema = new Schema({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+  }
+},
+{
+  toJSON: {
+    virtuals: true
   }
 });
+
+userSchema.virtual('gravatar').get(function(this: UserDoc) {
+  const hash = md5(this.email);
+  return `https://gravatar.com/avatar/${hash}?s=200d=retro`
+})
 
 export interface UserModel extends Model<UserDoc> {
 }

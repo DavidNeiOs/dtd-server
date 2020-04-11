@@ -12,6 +12,15 @@ export const validateLogIn = [
 ]
 
 
+export const isLoggedIn: RequestHandler = (req, res, next) => {
+  if(req.headers.authorization) {
+    next()
+    return
+  } else {
+    res.status(401).send({ success: false, message: 'You must be logged in' })
+  }
+}
+
 
 export const login: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
@@ -24,7 +33,6 @@ export const login: RequestHandler = async (req, res, next) => {
   const password = req.body.password;
   // Find user by email
   const user = await User.findOne({ email })
-  
   // Check if user exists
   if (!user) {
     return res.status(404).json({ succes: false, message: "Email not found" });
@@ -37,7 +45,8 @@ export const login: RequestHandler = async (req, res, next) => {
     // Create JWT Payload
     const payload = {
       id: user.id,
-      name: user.name
+      name: user.name,
+      gravatar: user.gravatar
     };
     const secret = process.env.SECRET || 'mySecret'
     // Sign token

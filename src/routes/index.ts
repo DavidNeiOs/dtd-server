@@ -6,7 +6,7 @@ import { resize } from "../services/jimp"
 import { addMedia } from "../controllers/helpersController"
 import { getStores, createStore, editStore, updateStore, getStoreBySlug, getStoresByTag } from "../controllers/storeController"
 import { validateRegister, register } from "../controllers/userController"
-import { login, validateLogIn } from '../controllers/authController'
+import { login, validateLogIn, isLoggedIn } from '../controllers/authController'
 import { catchErrors } from "../handlers/errorHandlers"
 
 
@@ -14,13 +14,13 @@ const router = express.Router()
 
 router.get('/', catchErrors(getStores))
 
-router.post('/upload-image', upload.single('image'), catchErrors(resize), addMedia)
+router.post('/upload-image', isLoggedIn, upload.single('image'), catchErrors(resize), addMedia)
 
-router.post('/add', catchErrors(createStore))
+router.post('/add', isLoggedIn, catchErrors(createStore))
 
-router.get('/stores/:id/edit', catchErrors(editStore))
+router.get('/stores/:id/edit', isLoggedIn, catchErrors(editStore))
 
-router.post('/stores/:id/edit', catchErrors(updateStore))
+router.post('/stores/:id/edit', isLoggedIn, catchErrors(updateStore))
 
 router.get('/store/:slug', catchErrors(getStoreBySlug))
 
