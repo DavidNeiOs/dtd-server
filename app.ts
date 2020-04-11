@@ -21,13 +21,12 @@ const app: Application  = express();
 let server: http.Server | https.Server;
 dotenv.config();
 
-// If we are in production we are already running in https
 if (process.env.NODE_ENV === 'production') {
+  // If we are in production we are already running in https
   server = http.createServer(app)
-}
-// We are not in production so load up our certificates to be able to 
-// run the server in https mode locally
-else {
+} else {
+  // We are not in production so load up our certificates to be able to 
+  // run the server in https mode locally
   const certOptions = {
     key: fs.readFileSync(path.resolve('./server.key')),
     cert: fs.readFileSync(path.resolve('./server.crt'))

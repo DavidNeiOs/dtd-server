@@ -27,32 +27,34 @@ export const login: RequestHandler = async (req, res, next) => {
   
   // Check if user exists
   if (!user) {
-    return res.status(404).json({ emailnotfound: "Email not found" });
+    return res.status(404).json({ succes: false, message: "Email not found" });
   }
 
   // Check password
   const isMatch = await bcrypt.compare(password, user.password)
-    if (isMatch) {
-      // User matched
-      // Create JWT Payload
-      const payload = {
-        id: user.id,
-        name: user.name
-      };
-      const secret = process.env.SECRET || 'mySecret'
-      // Sign token
-      jwt.sign(
-        payload,
-        secret,
-        {
-          expiresIn: 31556926 // 1 year in seconds
-        },
-        (err, token) => {
-          res.json({
-            success: true,
-            token: "Bearer " + token
-          });
-        }
-      );
-    }
+  if (isMatch) {
+    // User matched
+    // Create JWT Payload
+    const payload = {
+      id: user.id,
+      name: user.name
+    };
+    const secret = process.env.SECRET || 'mySecret'
+    // Sign token
+    jwt.sign(
+      payload,
+      secret,
+      {
+        expiresIn: 31556926 // 1 year in seconds
+      },
+      (err, token) => {
+        res.json({
+          success: true,
+          token: "Bearer " + token
+        });
+      }
+    );
+  } else {
+    return res.status(406).json({ success: false, message: "Passwords dont match" });
+  }
 }

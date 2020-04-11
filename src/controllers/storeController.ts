@@ -14,7 +14,6 @@ export const createStore: RequestHandler = async (req, res) => {
 
 export const getStores: RequestHandler = async (req, res) => {
   // query db for a list of all stores
-  console.log(req.headers)
   const stores = await Store.find();
   res.send({ success: true, stores })
 }
