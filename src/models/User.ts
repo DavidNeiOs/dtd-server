@@ -1,13 +1,12 @@
-import mongoose, { Schema, Document, Model, model } from "mongoose"
+import mongoose, { Schema, model, Document, Model } from "mongoose"
 mongoose.Promise = global.Promise
 import md5 from 'md5'
 import validator from 'validator'
-import mongodbErrorHandler from "mongoose-mongodb-errors"
-import passportLocalMongoose from 'passport-local-mongoose'
 
 interface UserDoc extends Document {
   name: string;
   email: string;
+  password: string;
 }
 
 const userSchema: Schema = new Schema({
@@ -23,12 +22,14 @@ const userSchema: Schema = new Schema({
     type: String,
     required: true,
     trim: true
+  },
+  password: {
+    type: String,
+    required: true
   }
 });
 
-userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
-userSchema.plugin(mongodbErrorHandler);
-
-export interface UserModel extends Model<UserDoc> {}
+export interface UserModel extends Model<UserDoc> {
+}
 
 export default model<UserDoc, UserModel>('User', userSchema)

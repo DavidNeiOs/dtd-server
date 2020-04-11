@@ -10,8 +10,10 @@ import https from 'https'
 import http from 'http'
 import fs from 'fs'
 import path from 'path'
+import passport from 'passport'
 
 import { handleErrors } from "./src/handlers/errorHandlers"
+import passportConfig from "./src/handlers/passport"
 import { router } from "./src/routes"
 
 const app: Application  = express();
@@ -49,6 +51,9 @@ app.use(session({
   saveUninitialized: false,
   store: new MongoStore({ mongooseConnection: mongoose.connection })
 }))
+
+app.use(passport.initialize());
+passportConfig(passport)
 
 // ROUTES
 app.use('/', router)
