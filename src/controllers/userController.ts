@@ -2,7 +2,6 @@ import { RequestHandler } from "express"
 import {  body, validationResult } from 'express-validator'
 import * as bcrypt from 'bcryptjs'
 import * as jwt from "jsonwebtoken"
-import mongoose from "mongoose"
 
 import User from "../models/User"
 

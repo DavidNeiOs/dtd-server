@@ -1,4 +1,3 @@
-import passport from "passport"
 import {  body, validationResult } from 'express-validator'
 import { RequestHandler } from "express";
 import * as bcrypt from 'bcryptjs'
@@ -10,16 +9,6 @@ export const validateLogIn = [
   body('email').isEmail().normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
   body('password').not().isEmpty()
 ]
-
-
-export const isLoggedIn: RequestHandler = (req, res, next) => {
-  if(req.headers.authorization) {
-    next()
-    return
-  } else {
-    res.status(401).send({ success: false, message: 'You must be logged in' })
-  }
-}
 
 
 export const login: RequestHandler = async (req, res, next) => {
