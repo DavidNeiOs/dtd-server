@@ -19,10 +19,10 @@ export const handleErrors = (err: any, req: Request, res: Response, next: NextFu
   if (process.env.NODE_ENV !== "production") {
     console.log("Error:", err.message)
   }
-  res.status(err.status || 500);
-  res.send({
-    errors: {
-      message: "There was an error getting the data, try again later"
-    }
-  })
+  res
+    .status(err.status || 500)
+    .send({
+      success: false,
+      message: err.message
+    })
 }

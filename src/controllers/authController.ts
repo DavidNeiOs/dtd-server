@@ -1,16 +1,29 @@
-import {  body, validationResult } from 'express-validator'
+import {  check, body, validationResult } from 'express-validator'
 import { RequestHandler } from "express";
 import crypto from "crypto"
 import * as bcrypt from 'bcryptjs'
 import * as jwt from "jsonwebtoken"
 
 import User from "../models/User"
+import { hashPassword } from '../utils';
 
 export const validateLogIn = [
   body('email').isEmail().normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
   body('password').not().isEmpty()
 ]
 
+export const validateResetPassword = [
+  check("password", "invalid password")
+    .isLength({ min: 4 })
+    .custom((value, {req}) => {
+      if (value !== req.body.password_confirm) {
+          // trow error if passwords do not match
+          throw new Error("Passwords don't match");
+      } else {
+          return value;
+      }
+    })
+]
 
 export const login: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
@@ -59,7 +72,7 @@ export const login: RequestHandler = async (req, res, next) => {
   }
 }
 
-export const forgotPassword: RequestHandler = async (req, res, next) => {
+export const forgotPassword: RequestHandler = async (req, res) => {
   // 1. See if the user exists
   const user = await User.findOne({ email: req.body.email })
   if(!user) {
@@ -73,4 +86,21 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
   const resetUrl = `/account/reset/${user.resetPasswordToken}`
   // 4. redirect to login page
   res.json({ success: true, message: `You have been emailed a password link.`, resetUrl })
+}
+
+export const resetPassword: RequestHandler = async (req, res) => {
+  const { salt, hash} = await hashPassword(req.body.password)
+
+  const user = await User.findOneAndUpdate({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() }
+    },
+    { salt, password: hash, resetPasswordExpires: undefined, resetPasswordToken: undefined},
+    { new: true, runValidators: true}).exec();
+
+  if(!user) {
+    throw new Error('Password reset is invalid or has expired')
+  }
+
+  res.status(200).json({ success: true, message: 'Your password has been updated' })
 }

@@ -1,14 +1,24 @@
 import { RequestHandler } from "express"
-import {  body, validationResult } from 'express-validator'
+import {  check, body, validationResult } from 'express-validator'
 import * as bcrypt from 'bcryptjs'
 import * as jwt from "jsonwebtoken"
 
 import User, { UserDoc } from "../models/User"
+import { hashPassword } from "../utils"
 
 export const validateRegister = [
   body('email').isEmail().normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
   body('name').trim().not().isEmpty(),
-  body('password').not().isEmpty()
+  check("password", "invalid password")
+    .isLength({ min: 4 })
+    .custom((value, {req}) => {
+      if (value !== req.body.password_confirm) {
+          // trow error if passwords do not match
+          throw new Error("Passwords don't match");
+      } else {
+          return value;
+      }
+    })
 ]
 
 export const register: RequestHandler = async (req, res, next) => {
@@ -29,8 +39,7 @@ export const register: RequestHandler = async (req, res, next) => {
   })
 
   // hash of password
-  const salt = await bcrypt.genSalt(10)
-  const hash = await bcrypt.hash(newUser.password, salt)
+  const {salt, hash } = await hashPassword(password)
   newUser.salt = salt;
   newUser.password = hash;
   const userDb = await newUser.save()
