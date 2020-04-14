@@ -7,7 +7,7 @@ import { resize } from "../services/jimp"
 import { addMedia } from "../controllers/helpersController"
 import { getStores, createStore, editStore, updateStore, getStoreBySlug, getStoresByTag } from "../controllers/storeController"
 import { validateRegister, register, updateUser } from "../controllers/userController"
-import { login, validateLogIn } from '../controllers/authController'
+import { login, validateLogIn, forgotPassword } from '../controllers/authController'
 import { catchErrors } from "../handlers/errorHandlers"
 
 
@@ -34,6 +34,8 @@ router.post('/register', validateRegister, catchErrors(register))
 router.post('/login', validateLogIn, catchErrors(login))
 
 router.post('/update-user', passport.authenticate('jwt', { session: false }), catchErrors(updateUser))
+
+router.post('/forgot-password', catchErrors(forgotPassword))
 
 
 export { router };

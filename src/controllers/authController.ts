@@ -1,5 +1,6 @@
 import {  body, validationResult } from 'express-validator'
 import { RequestHandler } from "express";
+import crypto from "crypto"
 import * as bcrypt from 'bcryptjs'
 import * as jwt from "jsonwebtoken"
 
@@ -56,4 +57,20 @@ export const login: RequestHandler = async (req, res, next) => {
   } else {
     return res.status(406).json({ success: false, message: "Passwords dont match" });
   }
+}
+
+export const forgotPassword: RequestHandler = async (req, res, next) => {
+  // 1. See if the user exists
+  const user = await User.findOne({ email: req.body.email })
+  if(!user) {
+    return res.status(400).json({ success: false, message: "No account with that email exists"});
+  }
+  // 2. Set reset tokens and expiry on their account
+  user.resetPasswordToken = crypto.randomBytes(20).toString('hex');
+  user.resetPasswordExpires = Date.now() + 3600000;
+  await user.save();
+  // 3. Send an email with the token
+  const resetUrl = `/account/reset/${user.resetPasswordToken}`
+  // 4. redirect to login page
+  res.json({ success: true, message: `You have been emailed a password link.`, resetUrl })
 }

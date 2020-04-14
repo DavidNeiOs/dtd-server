@@ -31,6 +31,7 @@ export const register: RequestHandler = async (req, res, next) => {
   // hash of password
   const salt = await bcrypt.genSalt(10)
   const hash = await bcrypt.hash(newUser.password, salt)
+  newUser.salt = salt;
   newUser.password = hash;
   const userDb = await newUser.save()
 

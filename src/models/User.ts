@@ -8,7 +8,10 @@ export interface UserDoc extends Document {
   name: string;
   email: string;
   password: string;
-  gravatar: string
+  salt: string;
+  gravatar: string;
+  resetPasswordToken: string;
+  resetPasswordExpires: number;
 }
 
 const userSchema: Schema = new Schema({
@@ -28,7 +31,9 @@ const userSchema: Schema = new Schema({
   password: {
     type: String,
     required: true,
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 },
 {
   toJSON: {
