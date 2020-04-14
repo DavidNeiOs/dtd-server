@@ -3,7 +3,8 @@ mongoose.Promise = global.Promise
 import md5 from 'md5'
 import validator from 'validator'
 
-interface UserDoc extends Document {
+export interface UserDoc extends Document {
+  _id: string
   name: string;
   email: string;
   password: string;

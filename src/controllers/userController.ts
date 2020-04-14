@@ -3,7 +3,7 @@ import {  body, validationResult } from 'express-validator'
 import * as bcrypt from 'bcryptjs'
 import * as jwt from "jsonwebtoken"
 
-import User from "../models/User"
+import User, { UserDoc } from "../models/User"
 
 export const validateRegister = [
   body('email').isEmail().normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
@@ -37,8 +37,10 @@ export const register: RequestHandler = async (req, res, next) => {
   // sign in directly
 
   const payload = {
-    id: userDb.id,
-    name: userDb.name
+    id: userDb._id,
+    name: userDb.name,
+    email: userDb.email,
+    gravatar: userDb.gravatar
   }
 
   const secret = process.env.SECRET || 'mySecret'
@@ -57,3 +59,42 @@ export const register: RequestHandler = async (req, res, next) => {
     }
   )
 }
+
+export const updateUser: RequestHandler = async (req, res) => {
+  const updates = {
+    name: req.body.name,
+    email: req.body.email
+  }
+
+  const user = await User.findOneAndUpdate(
+    // haven't a proper solutin to this error
+    //@ts-ignore
+    { _id: req.user?._id },
+    { $set: updates },
+    { new: true, runValidators: true, context: 'query' }
+  )
+
+  // update token with new info
+  const payload = {
+    id: user?._id,
+    name: user?.name,
+    email: user?.email,
+    gravatar: user?.gravatar
+  }
+
+  const secret = process.env.SECRET || 'mySecret'
+
+  jwt.sign(
+    payload,
+    secret,
+    {
+      expiresIn: 31556926
+    },
+    (err, token) => {
+      res.json({
+        success: true,
+        token: `Bearer ${token}`,
+      })
+    }
+  )
+} 

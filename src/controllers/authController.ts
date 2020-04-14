@@ -33,8 +33,9 @@ export const login: RequestHandler = async (req, res, next) => {
     // User matched
     // Create JWT Payload
     const payload = {
-      id: user.id,
-      name: user.name,
+      id: user?._id,
+      name: user?.name,
+      email: user?.email,
       gravatar: user.gravatar
     };
     const secret = process.env.SECRET || 'mySecret'
