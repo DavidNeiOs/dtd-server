@@ -6,6 +6,7 @@ import * as jwt from "jsonwebtoken"
 
 import User from "../models/User"
 import { hashPassword } from '../utils';
+import { send } from "../handlers/mail"
 
 export const validateLogIn = [
   body('email').isEmail().normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
@@ -83,9 +84,16 @@ export const forgotPassword: RequestHandler = async (req, res) => {
   user.resetPasswordExpires = Date.now() + 3600000;
   await user.save();
   // 3. Send an email with the token
-  const resetUrl = `/account/reset/${user.resetPasswordToken}`
+  const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/account/reset/${user.resetPasswordToken}`
+
+  await send({
+    user: user,
+    subject: 'Password Reset',
+    resetUrl,
+    filename: 'password-reset'
+  })
   // 4. redirect to login page
-  res.json({ success: true, message: `You have been emailed a password link.`, resetUrl })
+  res.json({ success: true, message: `You have been emailed a password link.` })
 }
 
 export const resetPassword: RequestHandler = async (req, res) => {
